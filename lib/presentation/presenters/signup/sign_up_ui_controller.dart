@@ -1,11 +1,11 @@
+import 'package:get/get.dart';
 import 'package:project_test/domain/domain.dart';
 import 'package:project_test/screens/pages/pages.dart';
-import 'package:rxdart/rxdart.dart';
 
-import '../../screens/errors/errors.dart';
-import '../dependencies/dependencies.dart';
+import '../../../screens/errors/errors.dart';
+import '../../dependencies/dependencies.dart';
 
-class SignUpUiController implements SignUpPresenter {
+class SignUpUiController extends GetxController implements SignUpPresenter {
   final AddNewUser addNewUser;
   final ValidationUI validation;
 
@@ -18,23 +18,23 @@ class SignUpUiController implements SignUpPresenter {
   String? _password;
   String? _confirmPassword;
 
-  final _emailError = BehaviorSubject<ScreenError?>.seeded(null);
-  final _passwordError = BehaviorSubject<ScreenError?>.seeded(null);
-  final _confirmPasswordError = BehaviorSubject<ScreenError?>.seeded(null);
-  final _isFormValid = BehaviorSubject<bool>.seeded(false);
+  final _emailError = Rx<ScreenError?>(null);
+  final _passwordError = Rx<ScreenError?>(null);
+  final _confirmPasswordError = Rx<ScreenError?>(null);
+  final _isFormValid = false.obs;
 
   @override
-  Stream<ScreenError?> get emailErrorStream => _emailError.stream;
+  Stream<ScreenError?> get emailErrorStream => _emailError.stream.distinct();
 
   @override
-  Stream<ScreenError?> get passwordErrorStream => _passwordError.stream;
+  Stream<ScreenError?> get passwordErrorStream => _passwordError.stream.distinct();
 
   @override
   Stream<ScreenError?> get confirmPasswordStream =>
-      _confirmPasswordError.stream;
+      _confirmPasswordError.stream.distinct();
 
   @override
-  Stream<bool> get isFormValidStream => _isFormValid.stream;
+  Stream<bool> get isFormValidStream => _isFormValid.stream.distinct();
 
 
   @override
@@ -60,19 +60,6 @@ class SignUpUiController implements SignUpPresenter {
   @override
   void goToLogin() {
     // TODO: implement goToLogin
-  }
-
-  set isFormValid(bool isFormValid) {
-    _isFormValid.value = isFormValid;
-  }
-
-  void _validateForm() {
-    isFormValid = _emailError.value == null
-        && _passwordError.value == null
-        && _confirmPasswordError.value == null
-        && _email != null
-        && _confirmPassword != null
-        && _password != null ? true : false;
   }
 
   @override
@@ -111,5 +98,14 @@ class SignUpUiController implements SignUpPresenter {
       default:
         return null;
     }
+  }
+
+  void _validateForm() {
+    _isFormValid.value = _emailError.value == null
+        && _passwordError.value == null
+        && _confirmPasswordError.value == null
+        && _email != null
+        && _confirmPassword != null
+        && _password != null ? true : false;
   }
 }

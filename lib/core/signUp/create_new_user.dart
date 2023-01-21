@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'core.dart';
-import '../domain/domain.dart';
+import '../core.dart';
+import '../../domain/domain.dart';
 
 class CreateNewUser implements AddNewUser {
   final Validation validation;
   final CacheStorage cacheStorage;
-  final RemoteSignUp remoteSignUp;
+  final SignUpApi signUpApi;
 
   CreateNewUser({
     required this.validation,
     required this.cacheStorage,
-    required this.remoteSignUp,
+    required this.signUpApi,
   });
 
   @override
@@ -20,7 +20,7 @@ class CreateNewUser implements AddNewUser {
       print('addUser');
       print('email ${params.email}');
       print('password ${params.password}');
-      await remoteSignUp.signUp(params.email, params.password);
+      await signUpApi.signUp(params.email, params.password);
     } catch (error) {
       print('error $error');
     }

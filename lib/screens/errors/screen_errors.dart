@@ -3,7 +3,7 @@ enum ScreenError {
   invalidField,
   unexpected,
   invalidCredentials,
-  emailInUse,
+  userNotFound,
 }
 
 extension ScreenErrorExtension on ScreenError {
@@ -15,8 +15,8 @@ extension ScreenErrorExtension on ScreenError {
         return 'Campo inválido';
       case ScreenError.requiredField:
         return 'Campo obrigatório';
-      case ScreenError.emailInUse:
-        return 'Esse email já está sendo utilizado';
+      case ScreenError.userNotFound:
+        return 'Usuário não encontrado';
       default:
         return 'Erro inesperado';
     }
