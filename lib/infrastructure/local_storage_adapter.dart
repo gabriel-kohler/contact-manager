@@ -1,3 +1,4 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:localstorage/localstorage.dart';
 
 import '../core/core.dart';
@@ -10,7 +11,7 @@ class LocalStorageAdapter implements CacheStorage {
 
   @override
   Future<void> save({required String key, required dynamic value}) async {
-    await localStorage.deleteItem(key);
+    //await localStorage.deleteItem(key);
     await localStorage.setItem(key, value);
   }
 
@@ -21,6 +22,9 @@ class LocalStorageAdapter implements CacheStorage {
 
   @override
   Future<dynamic> fetch({required String key}) async {
+    bool isReady = await localStorage.ready;
+    print('searching "${key}", is ready > $isReady');
+    print('${await localStorage.getItem(key)}');
     return await localStorage.getItem(key);
   }
 }

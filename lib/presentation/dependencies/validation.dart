@@ -6,4 +6,5 @@ enum ValidationError {
   requiredField,
   invalidField,
   minLength,
+  cpfRepeated,
 }

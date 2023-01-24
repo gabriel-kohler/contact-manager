@@ -1,15 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:project_test/core/core.dart';
-import 'package:project_test/screens/pages/pages.dart';
 import 'package:project_test/utils/utils.dart';
 
 import '../infrastructure/infrastructure.dart';
-import '../presentation/presenters/presenters.dart';
-import '../validation/validation.dart';
+import 'injections/injections.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,73 +20,59 @@ class MyApp extends StatelessWidget {
 
   FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
 
+  GeocodingPlatform get geocoding => GeocodingPlatform.instance;
+
+  LocalStorage get localStorage => LocalStorage('projecttest');
+
   @override
   Widget build(BuildContext context) {
+    final editContactUiController =
+        makeEditContactUiController(localStorage, geocoding);
     final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: makeLoginPage(firebaseAuth),
+      home: makeSplashPage(localStorage),
       navigatorObservers: [routeObserver],
       getPages: [
         GetPage(
+          name: AppRoutes.splashPage,
+          page: () => makeSplashPage(localStorage),
+        ),
+        GetPage(
           name: AppRoutes.signIn,
-          page: () => makeLoginPage(
+          page: () => makeLoginPage(firebaseAuth, localStorage),
+        ),
+        GetPage(
+          name: AppRoutes.signUp,
+          page: () => makeSignUpPage(firebaseAuth, localStorage),
+        ),
+        GetPage(
+          name: AppRoutes.addContactPage,
+          page: () => makeAddContactPage(localStorage, geocoding),
+        ),
+        GetPage(
+          name: AppRoutes.homePage,
+          page: () => makeHomePage(
+            LocalStorageAdapter(
+              localStorage: localStorage,
+            ),
             firebaseAuth,
           ),
         ),
         GetPage(
-          name: AppRoutes.signUp,
-          page: () => makeSignUpPage(firebaseAuth),
+          name: AppRoutes.contactDetailPage,
+          page: () => makeContactDetailPage(editContactUiController),
         ),
         GetPage(
-          name: AppRoutes.homePage,
-          page: () => const HomePage(),
+          name: AppRoutes.contactAddressDetailPage,
+          page: () => makeContactAddressDetailPage(editContactUiController),
         ),
       ],
     );
   }
 }
 
-LoginPage makeLoginPage(FirebaseAuth firebaseAuth) => LoginPage(
-      presenter: SignInUiController(
-        authentication: RemoteAuthentication(
-          signInApi: FirebaseAuthAdapter(firebaseAuth: firebaseAuth),
-        ),
-        validation: ValidationUIComposite(
-          [
-            RequiredFieldValidation('email'),
-            EmailValidation('email'),
-            RequiredFieldValidation('password'),
-          ],
-        ),
-      ),
-    );
 
-SignUpPage makeSignUpPage(FirebaseAuth firebaseAuth) => SignUpPage(
-        presenter: SignUpUiController(
-      addNewUser: CreateNewUser(
-        cacheStorage: LocalStorageAdapter(
-          localStorage: LocalStorage('projecttest'),
-        ),
-        signUpApi: FirebaseAuthAdapter(
-          firebaseAuth: firebaseAuth,
-        ),
-        validation: ValidationAdapter(),
-      ),
-      validation: ValidationUIComposite(
-        [
-          ...ValidationUIBuilder.field('email').required().email().build(),
-          ...ValidationUIBuilder.field('password')
-              .required()
-              .minLength(6)
-              .build(),
-          ...ValidationUIBuilder.field('confirmPassword')
-              .required()
-              .sameAs('password')
-              .build(),
-        ],
-      ),
-    ));

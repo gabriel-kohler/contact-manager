@@ -4,6 +4,7 @@ enum ScreenError {
   unexpected,
   invalidCredentials,
   userNotFound,
+  cpfRepeated,
 }
 
 extension ScreenErrorExtension on ScreenError {
@@ -17,6 +18,8 @@ extension ScreenErrorExtension on ScreenError {
         return 'Campo obrigatório';
       case ScreenError.userNotFound:
         return 'Usuário não encontrado';
+      case ScreenError.cpfRepeated:
+        return 'CPF já cadastrado';
       default:
         return 'Erro inesperado';
     }

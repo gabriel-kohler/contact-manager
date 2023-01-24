@@ -54,27 +54,13 @@ class SignInUiController extends GetxController implements LoginPresenter {
         _email!,
         _password!,
       );
-      Get.offAllNamed(AppRoutes.homePage);
+      Get.offAllNamed(AppRoutes.splashPage);
     } on AuthenticationError catch (error) {
-      _handleAuthenticationError(error);
+      mainError.value = error.handleAuthenticationError();
     } catch (error) {
       print(error);
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  void _handleAuthenticationError(AuthenticationError error) {
-    switch (error) {
-      case AuthenticationError.userNotFound:
-        mainError.value = ScreenError.userNotFound;
-        break;
-      case AuthenticationError.wrongPassword:
-        mainError.value = ScreenError.invalidCredentials;
-        break;
-      case AuthenticationError.unexpected:
-        mainError.value = ScreenError.unexpected;
-        break;
     }
   }
 

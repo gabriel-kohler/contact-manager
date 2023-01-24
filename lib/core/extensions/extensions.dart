@@ -1,0 +1,1 @@
+export 'contact_entity_extensions.dart';

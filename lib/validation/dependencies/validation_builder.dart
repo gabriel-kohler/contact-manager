@@ -1,3 +1,5 @@
+import 'package:project_test/validation/validators/cpf_validation.dart';
+
 import '../validation.dart';
 
 class ValidationUIBuilder {
@@ -32,6 +34,11 @@ class ValidationUIBuilder {
 
   ValidationUIBuilder sameAs(String fieldToCompare) {
     validations.add(CompareFieldValidation(field: fieldName, fieldToCompare: fieldToCompare));
+    return this;
+  }
+
+  ValidationUIBuilder cpf() {
+    validations.add(CpfValidation(fieldName));
     return this;
   }
 

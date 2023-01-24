@@ -1,31 +1,37 @@
 import 'dart:convert';
 
-import '../core.dart';
 import '../../domain/domain.dart';
+import '../core.dart';
 
 class CreateNewUser implements AddNewUser {
-  final Validation validation;
-  final CacheStorage cacheStorage;
-  final SignUpApi signUpApi;
+  final CacheStorage storage;
+  final SignUpCore signUpCore;
 
   CreateNewUser({
-    required this.validation,
-    required this.cacheStorage,
-    required this.signUpApi,
+    required this.storage,
+    required this.signUpCore,
   });
 
   @override
-  Future<void> addUser(AddNewUserParams params) async {
+  Future<UserEntity> addUser(AddNewUserParams params) async {
     try {
       print('addUser');
       print('email ${params.email}');
       print('password ${params.password}');
-      await signUpApi.signUp(params.email, params.password);
+
+      final user = await signUpCore.signUp(
+        params.email,
+        params.password,
+      );
+
+      await storage.save(
+        key: 'user',
+        value: jsonEncode(user),
+      );
+      return UserEntity.fromJson(user);
     } catch (error) {
       print('error $error');
+      rethrow;
     }
   }
-
-  String _mapToJson(Map<String, dynamic> value) => jsonEncode(value);
-
 }

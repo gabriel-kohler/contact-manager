@@ -1,29 +1,24 @@
+import 'dart:convert';
+
 import 'package:project_test/core/core.dart';
 import 'package:project_test/domain/domain.dart';
 
 class RemoteAuthentication implements Authentication {
-  final SignInApi signInApi;
+  final CacheStorage storage;
+  final SignInCore signInCore;
 
-  RemoteAuthentication({required this.signInApi});
+  RemoteAuthentication({required this.signInCore, required this.storage});
 
   @override
   Future<void> auth(String email, String password) async {
     try {
-      await signInApi.signIn(email, password);
-    } on SignInApiError catch (error) {
-      _handleSignApiError(error);
+      final user = await signInCore.signIn(email, password);
+      await storage.save(
+        key: 'user',
+        value: jsonEncode(user),
+      );
+    } on SignInCoreError catch (error) {
+      throw error.handleSignInCoreError();
     }
   }
-
-  void _handleSignApiError(error) {
-    switch (error) {
-      case SignInApiError.userNotFound:
-      throw AuthenticationError.userNotFound;
-      case SignInApiError.wrongPassword:
-      throw AuthenticationError.wrongPassword;
-      case SignInApiError.unexpected:
-      throw AuthenticationError.unexpected;
-      }
-  }
-
 }

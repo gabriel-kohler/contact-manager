@@ -1,4 +1,10 @@
 export 'signUp/create_new_user.dart';
-export 'cache_storage.dart';
+export 'cache/cache_storage.dart';
 export 'signUp/sign_up.dart';
 export 'signIn/sign_in.dart';
+export 'http/http.dart';
+export 'validations/validations.dart';
+export 'contact/contact.dart';
+export 'cordinates/cordinates.dart';
+export 'deleteAccount/delete_account.dart';
+export 'extensions/extensions.dart';

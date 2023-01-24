@@ -3,6 +3,7 @@ import 'package:project_test/domain/domain.dart';
 import 'package:project_test/screens/pages/pages.dart';
 
 import '../../../screens/errors/errors.dart';
+import '../../../utils/utils.dart';
 import '../../dependencies/dependencies.dart';
 
 class SignUpUiController extends GetxController implements SignUpPresenter {
@@ -39,17 +40,21 @@ class SignUpUiController extends GetxController implements SignUpPresenter {
 
   @override
   Future<void> signUp() async {
-    // final params = AddNewUserParams(s
-    //   email: _email!,
-    //   password: _password!,
-    // );
-    //
-    // try {
-    //   print('addNewUser');
-    //   await addNewUser.addUser(params);
-    // } catch (error) {
-    //   print('error > $error');
-    // }
+    print('chegou aqui');
+    final params = AddNewUserParams(
+      email: _email!,
+      password: _password!,
+    );
+    try {
+      print('addNewUser');
+      final user = await addNewUser.addUser(params);
+      Get.offAllNamed(
+        AppRoutes.homePage,
+        arguments: user,
+      );
+    } catch (error) {
+      print('error > $error');
+    }
   }
 
   @override

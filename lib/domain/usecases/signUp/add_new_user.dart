@@ -1,5 +1,7 @@
+import '../../domain.dart';
+
 abstract class AddNewUser {
-  Future<void> addUser(AddNewUserParams params);
+  Future<UserEntity> addUser(AddNewUserParams params);
 }
 
 class AddNewUserParams {
